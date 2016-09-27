@@ -1,4 +1,6 @@
 class Movie < ActiveRecord::Base
+  validates :name, presence: true
+  validates :rating, :numericality => { :greater_than => 0, :less_than_or_equal_to => 10}
   # Pretends to hit some API, which would presumably incur some network latency.
   def self.from_paramount()
     sleep(10)
@@ -14,6 +16,10 @@ class Movie < ActiveRecord::Base
 
   # Implement yourself.
   def self.average_paramount_rating()
-    return 0.0
+    avg = 0
+    movies = self.from_paramount
+    return 0 if (movies.length == 0)
+    movies.each { |m| avg += m.rating }
+    avg / movies.length
   end
 end

@@ -50,10 +50,50 @@ RSpec.describe Movie, type: :model do
     end
 
     it "should return a valid list of movies" do
+      # Movie.stub(:from_paramount) { movies_paramount }
+      allow(Movie).to receive(:from_paramount).and_return(movies_paramount)
       movies = Movie.from_paramount
       movies.each do |movie|
         expect(movie).to be_a(Movie)
       end
+    end
+  end
+  
+  describe "Paramount average rating" do
+    let(:movies_paramount) do
+      movies = [
+        {:name => 'Star Trek', :rating => 2},
+        {:name => 'The Wolf of Wall Street', :rating => 4}
+      ]
+      movies.map { |m| Movie.new(m) }
+    end
+    
+    it "should return 0 when the list is empty" do
+      allow(Movie).to receive(:from_paramount).and_return([])
+      expect(Movie.average_paramount_rating).to be == 0
+    end
+    
+    it "should return the correct average rating (first way)" do
+      allow(Movie).to receive(:from_paramount).and_return(movies_paramount)
+      # Movie.stub(:from_paramount).and_return(movies_paramount)
+      # expect(Movie).to receive(:from_paramount).and_call_original
+      expect(Movie.average_paramount_rating).to be == 3
+    end
+    
+    it "should return the correct average rating (second way)" do
+      # Movie.stub(:from_paramount).and_return(movies_paramount)
+      Movie.should_receive(:from_paramount).and_call_original
+      expect(Movie.average_paramount_rating).to be == 6.8
+    end
+    
+    it "should return the correct average rating (third way)" do
+      expect(Movie).to receive(:from_paramount).and_call_original
+      expect(Movie.average_paramount_rating).to be == 6.8
+    end
+    
+    it "should return the correct average rating (4th way)" do
+      Movie.stub(:from_paramount).and_return(movies_paramount)
+      expect(Movie.average_paramount_rating).to be == 3
     end
   end
 end
