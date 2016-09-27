@@ -75,13 +75,10 @@ RSpec.describe Movie, type: :model do
     
     it "should return the correct average rating (first way)" do
       allow(Movie).to receive(:from_paramount).and_return(movies_paramount)
-      # Movie.stub(:from_paramount).and_return(movies_paramount)
-      # expect(Movie).to receive(:from_paramount).and_call_original
       expect(Movie.average_paramount_rating).to be == 3
     end
     
     it "should return the correct average rating (second way)" do
-      # Movie.stub(:from_paramount).and_return(movies_paramount)
       Movie.should_receive(:from_paramount).and_call_original
       expect(Movie.average_paramount_rating).to be == 6.8
     end
@@ -92,6 +89,11 @@ RSpec.describe Movie, type: :model do
     end
     
     it "should return the correct average rating (4th way)" do
+      Movie.stub(:from_paramount).and_return(movies_paramount)
+      expect(Movie.average_paramount_rating).to be == 3
+    end
+    
+    it "should return the correct average rating (5th way)" do
       Movie.stub(:from_paramount).and_return(movies_paramount)
       expect(Movie.average_paramount_rating).to be == 3
     end
